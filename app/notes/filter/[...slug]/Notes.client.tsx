@@ -40,7 +40,7 @@ const NotesClient = ({tag}: NotesClientProps) => {
 	return (
     <div className={css.app}>
 			<header className={css.toolbar}>
-				<SearchBox onChange={updateSearchQuery} />
+				<SearchBox onChange={() => updateSearchQuery} />
 				{ isSuccess && total_pages > 1 && (
 					<Pagination totalPages={total_pages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
 				) }

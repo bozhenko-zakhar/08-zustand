@@ -22,25 +22,31 @@ interface NotesClientProps {
 
 const NotesClient = ({tag}: NotesClientProps) => {
 	const [searchQuery, setSearchQuery] = useState("");
+	const [debouncedQuery, setDebouncedQuery] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const { data, isLoading, isSuccess, isFetched } = useQuery({
-		queryKey: ['notes', searchQuery, currentPage, tag],
-		queryFn: () => tag === undefined ? fetchNotes({searchText: searchQuery, currentPage: currentPage}) : fetchNotesByCategory({searchText: searchQuery, currentPage: currentPage, noteTag: tag}),
+		queryKey: ['notes', debouncedQuery, currentPage, tag],
+		queryFn: () => tag === undefined ? fetchNotes({searchText: debouncedQuery, currentPage: currentPage}) : fetchNotesByCategory({searchText: debouncedQuery, currentPage: currentPage, noteTag: tag}),
 		placeholderData: keepPreviousData,
 		refetchOnMount: false,
 	});
 
-	const updateSearchQuery = useDebouncedCallback((query) => {
-		setSearchQuery(query);
+	const updateDebouncedQuery = useDebouncedCallback((query) => {
+		setDebouncedQuery(query);
 		setCurrentPage(1);
-	}, 300)	
+	}, 300);
+
+	const handleSearchChange = (query: string) => {
+		setSearchQuery(query);
+		updateDebouncedQuery(query);
+	}
 	
 	const total_pages = data?.totalPages ?? 0;
 	return (
     <div className={css.app}>
 			<header className={css.toolbar}>
-				<SearchBox onChange={updateSearchQuery} />
+				<SearchBox value={searchQuery} onChange={handleSearchChange} />
 				{ isSuccess && total_pages > 1 && (
 					<Pagination totalPages={total_pages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
 				) }

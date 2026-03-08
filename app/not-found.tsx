@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 		url: "https://08-zustand-sigma-rosy.vercel.app/",
 		images: [{
 			alt: "404 error preview image",
-			width: "1200",
-			height: "630",
+			width: 1200,
+			height: 630,
 			url: "https://raw.githubusercontent.com/tsparticles/404-templates/main/__screenshots/simple.png"
 		}]
 	}

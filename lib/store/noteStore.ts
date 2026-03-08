@@ -2,7 +2,7 @@ import { NewNote } from "@/types/note";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type DraftSore = {
+type DraftStore = {
 	draft: NewNote;
 	setDraft: (note: NewNote) => void;
 	clearDraft: () => void
@@ -14,7 +14,7 @@ const initialDraft: NewNote = {
   tag: 'Todo',
 };
 
-export const useDraftStore = create<DraftSore>()(persist( (set) => ({
+export const useDraftStore = create<DraftStore>()(persist( (set) => ({
 		draft: initialDraft,
 		setDraft: (note: NewNote) => set(() => ({draft: note})),
 		clearDraft: () => set(() => ({draft: initialDraft}))

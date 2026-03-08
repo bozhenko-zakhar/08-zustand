@@ -33,8 +33,8 @@ const NotesClient = ({tag}: NotesClientProps) => {
 		refetchOnMount: false,
 	});
 
-	const updateSearchQuery = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchQuery(event.target.value);
+	const updateSearchQuery = useDebouncedCallback((query) => {
+		setSearchQuery(query);
 		setCurrentPage(1);
 	}, 300)	
 	

@@ -6,9 +6,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
-import Modal from '@/components/Modal/Modal';
 import SearchBox from '@/components/SearchBox/SearchBox';
-import NoteForm from '@/components/NoteForm/NoteForm';
 import Loader from '@/components/Loader/Loader';
 
 import css from "./Notes.client.module.css"
@@ -16,6 +14,7 @@ import css from "./Notes.client.module.css"
 import { Toaster } from 'react-hot-toast';
 import { fetchNotes, fetchNotesByCategory } from '@/lib/api';
 import { NoteTag } from '@/types/note';
+import Link from 'next/link';
 
 interface NotesClientProps {
 	tag: NoteTag | undefined
@@ -24,7 +23,6 @@ interface NotesClientProps {
 const NotesClient = ({tag}: NotesClientProps) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const [isModalActive, setModalActive] = useState(false);
 
 	const fetchNotesParams = {currentPage: currentPage, searchText: searchQuery}
 
@@ -49,13 +47,7 @@ const NotesClient = ({tag}: NotesClientProps) => {
 					<Pagination totalPages={total_pages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
 				) }
 
-				<button className={css.button} onClick={() => setModalActive(true)}>Create note +</button>
-
-				{ isModalActive &&
-					<Modal closeModal={() => setModalActive(false)}>
-						<NoteForm closeModal={() => setModalActive(false)} />
-					</Modal>
-				} 
+				<Link className={css.button} href="/notes/action/create">Create note +</Link> 
 			</header>
 
 			{ data?.notes &&

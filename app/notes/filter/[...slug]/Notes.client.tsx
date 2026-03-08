@@ -24,17 +24,15 @@ const NotesClient = ({tag}: NotesClientProps) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
 
-	const fetchNotesParams = {currentPage: currentPage, searchText: searchQuery}
-
 	const { data, isLoading, isSuccess, isFetched } = useQuery({
 		queryKey: ['notes', searchQuery, currentPage, tag],
-		queryFn: () => tag === undefined ? fetchNotes(fetchNotesParams) : fetchNotesByCategory({...fetchNotesParams, noteTag: tag}),
+		queryFn: () => tag === undefined ? fetchNotes({searchText: searchQuery, currentPage: currentPage}) : fetchNotesByCategory({searchText: searchQuery, currentPage: currentPage, noteTag: tag}),
 		placeholderData: keepPreviousData,
 		refetchOnMount: false,
 	});
 
-	const updateSearchQuery = useDebouncedCallback((query) => {
-		setSearchQuery(query);
+	const updateSearchQuery = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchQuery(event.target.value);
 		setCurrentPage(1);
 	}, 300)	
 	

@@ -9,11 +9,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createNote } from '../../lib/api'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { useDraftStore } from '@/lib/store/noteStore'
 
 export default function NoteForm() {
 	const fieldId = useId();
 	const queryClient = useQueryClient();
 	const router = useRouter();
+	
+	const { draft, setDraft, clearDraft } = useDraftStore();
 
 	const createNoteMutation = useMutation({
 		mutationFn: async (newNote: NewNote) => {
@@ -25,6 +28,7 @@ export default function NoteForm() {
 			return createdNote;
 		},
 		onSuccess: () => {
+			clearDraft();
 			queryClient.invalidateQueries({ queryKey: ['notes', "", 1, undefined] });
 			router.push("/notes/filter/all");
 		
@@ -50,7 +54,10 @@ export default function NoteForm() {
 	function handleChange(event: React.ChangeEvent<
 		HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 	>) {
-		
+		setDraft({
+			...draft,
+			[event.target.name]: event.target.value
+		})
 	}
 
 	function handleSubmit(formData: FormData) {
@@ -68,7 +75,14 @@ export default function NoteForm() {
 		<form className={css.form} action={handleSubmit}>
 			<div className={css.formGroup}>
 				<label htmlFor={`${fieldId}-title`}>Title</label>
-				<input onChange={handleChange} className={css.input} type="text" name="title" id={`${fieldId}-title`} />
+				<input
+					onChange={handleChange}
+					className={css.input}
+					defaultValue={draft.title}
+					type="text"
+					name="title"
+					id={`${fieldId}-title`}
+				/>
 				
 				{/* <ErrorMessage name="title" component="span" className={css.error} /> */}
 			</div>
@@ -78,6 +92,7 @@ export default function NoteForm() {
 				<textarea
 					onChange={handleChange}
 					className={css.textarea}
+					defaultValue={draft.content}
 					id={`${fieldId}-content`}
 					name="content"
 					rows={8}
@@ -90,6 +105,7 @@ export default function NoteForm() {
 				<select
 				 	onChange={handleChange}
 					className={css.select}
+					defaultValue={draft.tag}
 					id={`${fieldId}-tag`}
 					name="tag"
 				>
@@ -103,7 +119,7 @@ export default function NoteForm() {
 			</div>
 
 			<div className={css.actions}>
-				<button onClick={() => undefined} type="button" className={css.cancelButton}>
+				<button onClick={() => router.back()} type="button" className={css.cancelButton}>
 					Cancel
 				</button>
 				<button
